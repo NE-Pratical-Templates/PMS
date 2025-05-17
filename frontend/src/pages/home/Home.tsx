@@ -5,6 +5,7 @@ import PaymentFeeModal from "@/components/PaymentModal";
 import SessionDetails from "@/components/SessionDetails";
 import Sidebar from "@/components/Sidebar";
 import { CommonContext } from "@/context";
+import { PaymentStatus } from "@/enums";
 import { createPayment } from "@/services/payment";
 import {
   exitSession,
@@ -13,7 +14,7 @@ import {
   getSessions,
   getUserSessions,
 } from "@/services/sessions";
-import { PaymentFee, PaymentFeePayload } from "@/types";
+import { ISession, PaymentFee, PaymentFeePayload } from "@/types";
 import { format } from "date-fns";
 import { DataTable, DataTableColumn } from "mantine-datatable";
 import React, { useContext, useEffect, useState } from "react";
@@ -65,55 +66,54 @@ const Home: React.FC = () => {
   const handleProceedToPayment = (data: PaymentFeePayload) => {
     createPayment({ paymentData: data, setLoading, setFeeModalOpen });
   };
-  const columns: DataTableColumn[] = [
+  const columns: DataTableColumn<ISession>[] = [
     {
       accessor: "slot.number",
-      title: "Parking Slot ",
-      // sortable: true,
-      sortKey: "id",
+      title: "🚘 Slot #",
     },
     {
       accessor: "name",
-      title: "Entry time",
-      // sortable: true,
-      sortKey: "name",
+      title: "🕓 Entry Time",
       render: ({ createdAt }) => (
-        <span>
-          {format(new Date(createdAt as string), "MMM dd, yyyy, hh:mm a")}
+        <span className="text-gray-700 text-sm">
+          {format(new Date(createdAt), "MMM dd, yyyy, hh:mm a")}
         </span>
       ),
     },
     {
       accessor: "exitTime",
-      title: "Exit time",
-      // sortable: true,
+      title: "🏁 Exit Time",
       render: ({ exitTime }: any) =>
         exitTime ? (
-          <span>{format(new Date(exitTime), "MMM dd, yyyy , hh:mm a")}</span>
+          <span className="text-gray-700 text-sm">
+            {format(new Date(exitTime), "MMM dd, yyyy, hh:mm a")}
+          </span>
         ) : (
-          <span className="text-gray-500 italic">Still in parking</span>
+          <span className="text-gray-500 italic text-sm">Still in parking</span>
         ),
     },
     {
       accessor: "paymentStatus",
-      title: "status",
+      title: "💳 Status",
       render: ({ paymentStatus }) => (
         <span
-          className={`px-3 py-1 rounded-full text-white text-sm font-semibold ${
-            paymentStatus === "PAID" ? "bg-green-600" : "bg-yellow-500"
+          className={`px-3 py-1 rounded-full text-white text-xs font-medium ${
+            paymentStatus === PaymentStatus.PAID
+              ? "bg-green-600"
+              : "bg-yellow-500"
           }`}
         >
-          {paymentStatus === "PAID" ? "Paid" : "Not paid yet"}
+          {paymentStatus === PaymentStatus.PAID ? "Paid" : "Not paid yet"}
         </span>
       ),
     },
     {
       accessor: "payment.amount",
-      title: "Amount",
+      title: "💰 Amount",
       render: ({ payment }: any) => {
         const amount = payment?.amount;
         return typeof amount === "number" ? (
-          <span>${amount.toFixed(2)}</span>
+          <span className="text-gray-800">${amount.toFixed(2)}</span>
         ) : (
           <span className="text-red-500 italic">Not paid</span>
         );
@@ -121,41 +121,49 @@ const Home: React.FC = () => {
     },
     {
       accessor: "plateNumber",
-      title: "car plate number",
+      title: "🚙 Plate No.",
+      render: ({ plateNumber }) => (
+        <span className="text-gray-700 font-medium">{plateNumber}</span>
+      ),
     },
     {
       accessor: "isExited",
-      title: "Parking Status",
+      title: "📍 Parking Status",
       render: ({ isExited, paymentStatus }) => {
         if (isExited) {
-          return <span className="text-yellow-400">Exited</span>;
-        } else if (paymentStatus === "PAID") {
-          return <span className="text-green-600">Paid – Can Exit now </span>;
+          return <span className="text-yellow-500 font-medium">Exited</span>;
+        } else if (paymentStatus === PaymentStatus.PAID) {
+          return (
+            <span className="text-green-600 font-medium">Paid – Can Exit</span>
+          );
         } else {
-          return <span className="text-red-600">In Parking – Unpaid</span>;
+          return (
+            <span className="text-red-600 font-medium">
+              In Parking – Unpaid
+            </span>
+          );
         }
       },
     },
-
     {
       accessor: "subject",
-      title: "Action",
+      title: "⚙️ Actions",
       render: (row) => (
-        <div className="flex gap-2">
+        <div className="flex gap-3">
           <button
             onClick={() => handleView(row.id as string)}
-            className="bg-blue-500 text-white px-3 py-1 rounded"
+            className="bg-blue-600 hover:bg-blue-700 focus:ring-2 focus:ring-blue-400 focus:outline-none text-white px-4 py-1.5 rounded-md shadow-md transition duration-200 ease-in-out text-sm font-semibold"
           >
             View
           </button>
-          {!row.paymentStatus || row.paymentStatus === "PENDING" ? (
+          {row.paymentStatus === PaymentStatus.PENDING && (
             <button
               onClick={() => handleGetPaymentFee(row.id as string)}
-              className="bg-green-500 text-white px-5 py-1 rounded"
+              className="bg-green-600 hover:bg-green-700 focus:ring-2 focus:ring-green-400 focus:outline-none text-white px-5 py-1.5 rounded-md shadow-md transition duration-200 ease-in-out text-sm font-semibold"
             >
-              Get paymentFee
+              Get Fee
             </button>
-          ) : null}
+          )}
         </div>
       ),
     },
@@ -217,34 +225,40 @@ const Home: React.FC = () => {
       <Helmet>
         <title>Home</title>
       </Helmet>
-      <div className="w-full lg:w-11/12 flex flex-col">
+      <div className="w-full lg:ml-[16.6667%] flex flex-col bg-gray-50 min-h-screen">
         <Navbar />
-        <div className=" flex flex-col px-2 xs:px-6 sm:px-14 pt-8">
-          <span className="text-lg font-semibold">
-            Hi👋, {user.firstName} {user.lastName}
-          </span>
-          <div className="w-full my-14">
-            <div className="w-full justify-end sm:justify-between flex mb-6 items-center">
-              <div>
-                <span className="hidden sm:flex my-8 text-xl">
-                  your recently sessions
-                </span>
+
+        <div className="flex flex-col px-4 sm:px-8 md:px-14 pt-8 w-full">
+          <h1 className="text-xl sm:text-2xl font-bold mb-2 text-gray-800">
+            Hi 👋, {user.firstName} {user.lastName}
+          </h1>
+
+          <div className="mt-10">
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6 mb-10">
+              {/* Heading + Button */}
+              <div className="flex flex-col gap-3">
+                <h2 className="text-2xl font-semibold text-gray-900">
+                   Recently Accessed Sessions
+                </h2>
+
                 <button
-                  className="text-white bg-primary-blue rounded py-2 px-8 text-lg"
                   onClick={() => setIsModalOpen(true)}
+                  className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 text-base rounded-lg shadow-md transition-all"
                 >
-                  Enter in parking
+                   Enter Parking
                 </button>
               </div>
-              <div className="bg-white w-11/12 dsm:w-10/12 sm:w-5/12 plg:w-3/12 rounded-3xl flex items-center relative h-12 justify-between">
+
+             
+              <div className="relative w-full sm:w-1/2 md:w-1/3">
                 <input
-                  placeholder="Search here..."
                   type="text"
-                  className="outline-0 rounded-3xl bg-inherit w-10/12 p-2 pl-6"
+                  placeholder="🔍 Search sessions..."
                   onChange={(e) => setSearchKey(e.target.value)}
+                  className="w-full bg-white border border-gray-300 rounded-full py-2 pl-5 pr-12 shadow-sm text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
                 <button
-                  onClick={() => {
+                  onClick={() =>
                     getSessions({
                       page,
                       limit,
@@ -252,37 +266,46 @@ const Home: React.FC = () => {
                       setMeta,
                       setSessions,
                       searchKey,
-                    });
-                  }}
-                  className="absolute top-1 mx-auto bottom-1 right-2 bg-primary-blue w-10 h-10 rounded-full flex items-center justify-center"
+                    })
+                  }
+                  className="absolute right-0 top-1/2 transform -translate-y-1/2 bg-blue-600 hover:bg-blue-700 w-9 h-9 rounded-full flex items-center justify-center"
                 >
-                  <BiSearch color="white" size={25} />
+                  <BiSearch size={20} color="white" />
                 </button>
               </div>
             </div>
-            <DataTable
-              records={sessions as unknown as Record<string, unknown>[]}
-              columns={columns}
-              page={page}
-              recordsPerPage={limit}
-              loadingText={loading ? "Loading..." : "Rendering..."}
-              onPageChange={(page) => setPage(page)}
-              recordsPerPageOptions={PAGE_SIZES}
-              onRecordsPerPageChange={setLimit}
-              withTableBorder
-              borderRadius="sm"
-              withColumnBorders
-              styles={{ header: { background: "#f0f0f0cc" } }}
-              striped
-              totalRecords={meta?.total}
-              highlightOnHover
-              highlightOnHoverColor={"000"}
-              noRecordsText="No records found"
-              paginationActiveBackgroundColor={"#1967d2"}
-            />
+
+            {/* Table Section */}
+            {Array.isArray(sessions) ? (
+              <DataTable<ISession>
+                records={sessions}
+                columns={columns}
+                page={page}
+                recordsPerPage={limit}
+                loadingText={loading ? "Loading..." : "Rendering..."}
+                onPageChange={setPage}
+                recordsPerPageOptions={PAGE_SIZES}
+                onRecordsPerPageChange={setLimit}
+                withTableBorder
+                borderRadius="md"
+                withColumnBorders
+                styles={{ header: { backgroundColor: "#f9fafb" } }}
+                striped
+                totalRecords={meta?.total ?? 0}
+                highlightOnHover
+                highlightOnHoverColor="#e0f2fe"
+                noRecordsText="🚫 No sessions found"
+                paginationActiveBackgroundColor="#2563eb"
+              />
+            ) : (
+              <div className="text-red-600 font-medium mt-4">
+                ⚠️ Failed to load session records.
+              </div>
+            )}
           </div>
         </div>
       </div>
+
       <Modal
         isOpen={isModalOpen}
         onClose={() => {

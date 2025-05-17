@@ -98,7 +98,7 @@ const AdminDashboard: React.FC = () => {
       <Helmet>
         <title>Admin Dashboard</title>
       </Helmet>
-      <div className="w-full flex flex-col lg:w-11/12">
+      <div className="w-full lg:ml-[16.6667%] flex flex-col">
         <Navbar />
         <div className="px-4 sm:px-10 py-8 space-y-10">
           <h1 className="text-3xl font-bold text-gray-800 mb-2">

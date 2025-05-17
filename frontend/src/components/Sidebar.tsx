@@ -50,8 +50,8 @@ const Sidebar: React.FC = () => {
   }
 
   return (
-    <div className="w-2/12 hidden sm lg:flex flex-col min-h-screen bg-white px-4 py-8 shadow-md">
-      <img src={LogoRound} className="w-24 mx-auto mb-4" alt="Logo" />
+    <div className="w-2/12 hidden sm lg:flex flex-col max-h-screen bg-white px-4 py-8 fixed left-0 top-0 h-screen overflow-y-auto z-40">
+      <img src={LogoRound} className="w-44 mx-auto" alt="Logo" />
       <span className="font-bold text-xl text-center text-slate-700 mb-6">
         PMS
       </span>

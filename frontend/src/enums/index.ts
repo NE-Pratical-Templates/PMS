@@ -1,6 +1,6 @@
 export enum PaymentStatus {
-  PENDING,
-  PAID,
+  PENDING="PENDING",
+  PAID="PAID",
 }
 export enum PaymentMethod {
   CASH = "CASH",

@@ -71,20 +71,29 @@ const Modal: React.FC<ModalProps> = ({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-gray-500 bg-opacity-50 flex justify-center items-center z-50">
-      <div className="bg-white rounded-lg w-1/3 p-6">
-        <div className="flex justify-between items-center mb-4">
-          <h2 className="text-xl font-semibold">Enter Parking</h2>
-          <button onClick={onClose} className="text-red-500 font-bold">
-            X
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50 px-4 sm:px-6">
+      <div className="bg-white w-full max-w-md rounded-2xl shadow-2xl p-5 sm:p-8 animate-fade-in-up transition-all duration-300">
+        {/* Header */}
+        <div className="flex justify-between items-center border-b pb-3">
+          <h2 className="text-xl sm:text-2xl font-semibold text-gray-800">
+            Enter Parking
+          </h2>
+          <button
+            onClick={onClose}
+            className="text-gray-400 hover:text-red-500 text-2xl font-bold transition"
+            aria-label="Close modal"
+          >
+            &times;
           </button>
         </div>
-        <form onSubmit={handleSubmit}>
+
+        {/* Form */}
+        <form onSubmit={handleSubmit} className="mt-6 space-y-5">
           {/* Plate Number */}
-          <div className="mb-4">
+          <div>
             <label
               htmlFor="plateNumber"
-              className="block text-sm font-medium text-gray-700"
+              className="block text-sm font-medium text-gray-700 mb-1"
             >
               Plate Number
             </label>
@@ -94,11 +103,15 @@ const Modal: React.FC<ModalProps> = ({
               type="text"
               value={formData.plateNumber}
               onChange={handleChange}
-              className="border rounded w-full p-2"
               placeholder="Enter plate number"
+              className={`w-full rounded-lg border px-4 py-2 text-sm sm:text-base transition focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+                errors.plateNumber ? "border-red-500" : "border-gray-300"
+              }`}
             />
             {errors.plateNumber && (
-              <span className="text-red-500 text-sm">{errors.plateNumber}</span>
+              <p className="text-red-500 text-xs sm:text-sm mt-1">
+                {errors.plateNumber}
+              </p>
             )}
           </div>
 
@@ -107,12 +120,15 @@ const Modal: React.FC<ModalProps> = ({
             <button
               type="submit"
               disabled={loading}
-              className={`bg-blue-500 text-white py-2 px-4 rounded ${
-                loading ? "opacity-50" : ""
+              className={`flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-5 py-2 rounded-lg text-sm sm:text-base font-medium transition ${
+                loading ? "opacity-60 cursor-not-allowed" : ""
               }`}
             >
               {loading ? (
-                <BiLoaderAlt className="animate-spin" size={20} />
+                <>
+                  <BiLoaderAlt className="animate-spin" size={18} />
+                  Processing...
+                </>
               ) : (
                 "Enter Parking"
               )}

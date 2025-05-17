@@ -2,6 +2,7 @@
 /* eslint-disable @typescript-eslint/ban-types */
 import { CommonContext } from "@/context";
 import Layout from "@/layout/Layout";
+import Otp from "@/pages/auth/otp/Otp";
 import AdminDashboard from "@/pages/home/AdminDashboard";
 import Profile from "@/pages/profile/Profile";
 import Requests from "@/pages/Requests/Requests";
@@ -27,6 +28,7 @@ const PagesRouter: React.FC<{}> = () => {
         <Routes>
           <Route path="/auth/login" element={<Login />} />
           <Route path="/auth/signup" element={<Signup />} />
+          <Route path="/auth/otp" element={<Otp />} />
           <Route
             path="/"
             element={

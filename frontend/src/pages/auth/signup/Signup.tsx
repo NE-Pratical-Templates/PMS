@@ -9,7 +9,6 @@ import { Resolver, SubmitHandler, useForm } from "react-hook-form";
 import { BiLoaderAlt } from "react-icons/bi";
 import { Link } from "react-router-dom";
 import * as yup from "yup";
-//TODO:  separate student and admin portal to allow admin  to register books
 const Register: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(false);
   const [showPassword, setShowPassword] = useState<boolean>(false);

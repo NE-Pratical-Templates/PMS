@@ -141,7 +141,7 @@ const Slots: React.FC = () => {
       <Helmet>
         <title>Slots</title>
       </Helmet>
-      <div className="w-full lg:w-11/12 flex flex-col">
+      <div className="w-full lg:ml-[16.6667%] flex flex-col">
         <Navbar />
         <div className=" flex flex-col px-2 xs:px-6 sm:px-14 pt-8">
           <span className="text-lg font-semibold">

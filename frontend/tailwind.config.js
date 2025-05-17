@@ -1,6 +1,5 @@
 /** @type {import('tailwindcss').Config} */
 
-const colors = require("tailwindcss/colors");
 
 export default {
   content: ["./index.html", "./src/**/*.{js,ts,jsx,tsx}"],
@@ -34,9 +33,14 @@ export default {
           "25%": { transform: "rotate(1deg)" },
           "75%": { transform: "rotate(-1deg)" },
         },
+        fadeInUp: {
+          "0%": { opacity: 0, transform: "translateY(10px)" },
+          "100%": { opacity: 1, transform: "translateY(0)" },
+        },
       },
       animation: {
         ring: "ring .5s ease-in-out",
+        "fade-in-up": "fadeInUp 0.3s ease-out",
       },
       colors: {
         "delete-red": "#d72222",
