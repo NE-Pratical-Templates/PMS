@@ -238,7 +238,10 @@ const Requests: React.FC = () => {
                   placeholder="Search here..."
                   type="text"
                   className="outline-0 rounded-3xl bg-inherit w-10/12 p-2 pl-6"
-                  onChange={(e) => setSearchKey(e.target.value)}
+                  onChange={(e) => {
+                    setSearchKey(e.target.value);
+                    setPage(1); 
+                  }}
                 />
                 <button
                   onClick={refreshData}

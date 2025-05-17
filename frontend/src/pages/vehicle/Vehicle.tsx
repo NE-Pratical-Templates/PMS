@@ -80,56 +80,66 @@ const Vehicle: React.FC = () => {
       accessor: "",
       title: "Actions",
       render: (vehicle: any) => {
+        const hasNoRequests = vehicle?.requests?.length < 1;
+        const isAdmin = role === "ADMIN";
+
         return (
-          <div className="flex gap-2">
+          <div className="flex flex-wrap gap-2">
+            {/* View Button */}
             <button
               onClick={() => {
                 setSelectedVehicle(vehicle);
                 setViewModalOpen(true);
               }}
-              className="bg-primary-blue text-white px-4 py-2 rounded-md"
+              className="px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white rounded-md text-sm transition"
             >
               View
             </button>
-            {role != "ADMIN" && (
+
+            {/* Edit & Delete Buttons (Non-admin only) */}
+            {!isAdmin && (
               <>
                 <button
                   onClick={() => {
                     setSelectedVehicle(vehicle);
                     setEditModalOpen(true);
                   }}
-                  className="bg-primary-blue text-white px-4 py-2 rounded-md"
+                  className="px-3 py-1.5 bg-yellow-500 hover:bg-yellow-600 text-white rounded-md text-sm transition"
                 >
                   Edit
                 </button>
-                <>
-                  <button
-                    onClick={() => setVehicleToDelete(vehicle)}
-                    className="bg-red-500 text-white px-4 py-2 rounded-md"
-                  >
-                    Delete
-                  </button>
 
-                  {vehicleToDelete && (
-                    <ConfirmDialog
-                      isOpen={true}
-                      onClose={() => setVehicleToDelete(null)}
-                      onConfirm={() => {
+                <button
+                  onClick={() => setVehicleToDelete(vehicle)}
+                  className="px-3 py-1.5 bg-red-600 hover:bg-red-700 text-white rounded-md text-sm transition"
+                >
+                  Delete
+                </button>
+
+                {/* Confirm Delete Dialog */}
+                {vehicleToDelete?.id === vehicle.id && (
+                  <ConfirmDialog
+                    isOpen={true}
+                    onClose={() => setVehicleToDelete(null)}
+                    onConfirm={() => {
+                      if (vehicleToDelete && vehicleToDelete.id) {
                         handleDelete(vehicleToDelete.id);
-                        setVehicleToDelete(null);
-                      }}
-                      message="Are you sure you want to delete this vehicle?"
-                    />
-                  )}
-                </>
+                      }
+                      setVehicleToDelete(null);
+                    }}
+                    message="Are you sure you want to delete this vehicle?"
+                  />
+                )}
               </>
             )}
-            {vehicle?.requests?.length < 1 && role != "ADMIN" && (
+
+            {/* Slot Request Button */}
+            {hasNoRequests && !isAdmin && (
               <button
                 onClick={() => handleSlotRequest(vehicle.id)}
-                className="bg-green-500 text-white px-4 py-2 rounded-md"
+                className="px-3 py-1.5 bg-green-600 hover:bg-green-700 text-white rounded-md text-sm transition"
               >
-                request slot to park in
+                Request Slot
               </button>
             )}
           </div>
@@ -222,7 +232,10 @@ const Vehicle: React.FC = () => {
                   placeholder="Search here..."
                   type="text"
                   className="outline-0 rounded-3xl bg-inherit w-10/12 p-2 pl-6"
-                  onChange={(e) => setSearchKey(e.target.value)}
+                  onChange={(e) => {
+                    setSearchKey(e.target.value);
+                    setPage(1);
+                  }}
                 />
                 <button
                   onClick={() => {

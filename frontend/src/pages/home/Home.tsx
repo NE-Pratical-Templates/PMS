@@ -238,23 +238,25 @@ const Home: React.FC = () => {
               {/* Heading + Button */}
               <div className="flex flex-col gap-3">
                 <h2 className="text-2xl font-semibold text-gray-900">
-                   Recently Accessed Sessions
+                  Recently Accessed Sessions
                 </h2>
 
                 <button
                   onClick={() => setIsModalOpen(true)}
                   className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 text-base rounded-lg shadow-md transition-all"
                 >
-                   Enter Parking
+                  Enter Parking
                 </button>
               </div>
 
-             
               <div className="relative w-full sm:w-1/2 md:w-1/3">
                 <input
                   type="text"
                   placeholder="🔍 Search sessions..."
-                  onChange={(e) => setSearchKey(e.target.value)}
+                  onChange={(e) => {
+                    setSearchKey(e.target.value);
+                    setPage(1);
+                  }}
                   className="w-full bg-white border border-gray-300 rounded-full py-2 pl-5 pr-12 shadow-sm text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
                 <button

@@ -7,10 +7,13 @@ const initialState: {
   isLoggedIn: boolean;
 } = {
   user: {
-    id: 0,
-    names: "",
+    id: "",
+    firstName: "",
+    lastName: "",
+    createdAt: new Date(),
+    updatedAt: new Date(),
     email: "",
-    role: "",
+    role: "USER",
   },
   token: "",
   isLoggedIn: false,

@@ -39,44 +39,46 @@ const ViewVehicleModal: React.FC<ViewVehicleModalProps> = ({
         backgroundOpacity: 0.5,
       }}
     >
-      <div className="space-y-4 mt-4">
-        <div className="flex items-center gap-3">
-          <FaRegIdCard className="text-primary-blue" />
-          <p>
-            <strong className="text-gray-600">Plate Number:</strong>{" "}
-            {vehicle.plateNumber}
-          </p>
-        </div>
-
-        <div className="flex items-center gap-3">
-          <FaCar className="text-primary-blue" />
-          <p>
-            <strong className="text-gray-600">Vehicle Type:</strong>{" "}
-            {vehicle.vehicleType}
-          </p>
-        </div>
-
-        <div className="flex items-center gap-3">
-          <FaLayerGroup className="text-primary-blue" />
-          <p>
-            <strong className="text-gray-600">Model:</strong> {vehicle.model}
-          </p>
-        </div>
-
-        <div className="flex items-center gap-3">
-          <FaPalette className="text-primary-blue" />
-          <p>
-            <strong className="text-gray-600">Color:</strong> {vehicle.color}
-          </p>
-        </div>
-
-        <div className="flex items-center gap-3">
-          <FaIndustry className="text-primary-blue" />
-          <p>
-            <strong className="text-gray-600">Manufacturer:</strong>{" "}
-            {vehicle.maker}
-          </p>
-        </div>
+      <div className="mt-4 space-y-4">
+        {[
+          {
+            icon: FaRegIdCard,
+            label: "Plate Number",
+            value: vehicle.plateNumber,
+          },
+          {
+            icon: FaCar,
+            label: "Vehicle Type",
+            value: vehicle.vehicleType,
+          },
+          {
+            icon: FaLayerGroup,
+            label: "Model",
+            value: vehicle.model,
+          },
+          {
+            icon: FaPalette,
+            label: "Color",
+            value: vehicle.color,
+          },
+          {
+            icon: FaIndustry,
+            label: "Manufacturer",
+            value: vehicle.maker,
+          },
+        ].map(({ icon: Icon, label, value }) => (
+          <div key={label} className="flex items-center gap-3">
+            <Icon
+              className="text-primary-blue flex-shrink-0"
+              size={20}
+              aria-hidden="true"
+            />
+            <p>
+              <strong className="text-gray-600">{label}:</strong>{" "}
+              <span className="text-gray-900">{value}</span>
+            </p>
+          </div>
+        ))}
       </div>
     </Modal>
   );
