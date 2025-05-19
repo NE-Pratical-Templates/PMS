@@ -151,9 +151,7 @@ export const exitSession = async ({
   sessionId,
   setLoading,
   setSessionModalOpen,
-  setMeta,
 }: {
-  setMeta: React.Dispatch<React.SetStateAction<IMeta>>;
   sessionId: string;
   setLoading: React.Dispatch<React.SetStateAction<boolean>>;
   setSessionModalOpen: React.Dispatch<React.SetStateAction<boolean>>;

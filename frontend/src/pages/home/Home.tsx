@@ -60,7 +60,6 @@ const Home: React.FC = () => {
       sessionId,
       setLoading,
       setSessionModalOpen,
-      setMeta,
     });
   };
   const handleProceedToPayment = (data: PaymentFeePayload) => {
