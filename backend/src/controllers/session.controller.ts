@@ -1,11 +1,12 @@
 import { Request, Response } from "express";
-import { AuthRequest } from "../types";
+import { AuthRequest, ExitTicketPayload } from "../types";
 import prisma from "../prisma/prisma-client";
 import ServerResponse from "../utils/ServerResponse";
 import { Prisma } from "@prisma/client";
 import { paginator } from "../utils/paginator";
 import { CONSTANTS } from "../utils/cconstants";
 import { sortSessionsByPaymentAndExitStatus } from "../utils/sorter";
+import { formatToReadableDate, generatePDFBuffer } from "../utils/pdf";
 
 const createSession = async (req: Request, res: Response) => {
   try {
@@ -325,7 +326,7 @@ const exitParking = async (req: Request, res: Response) => {
         exitTime,
       },
     });
-    await prisma.parkingSlot.update({
+    const slot = await prisma.parkingSlot.update({
       where: {
         id: session?.slot.id,
       },
@@ -338,10 +339,24 @@ const exitParking = async (req: Request, res: Response) => {
         slotId: session.slotId,
       },
     });
-    return ServerResponse.success(res, "car exited successfully", {
-      msg: "car exited successfully",
-      exitTime,
+    const payment = await prisma.payment.findUnique({
+      where: {
+        sessionId: session.id,
+      },
     });
+    const payload: ExitTicketPayload = {
+      slotNumber: slot.number,
+      entryTime: formatToReadableDate(session.entryTime.toISOString()),
+      exitTime: formatToReadableDate(exitTime.toISOString()),
+      status: session.paymentStatus,
+      vehiclePlateNumber: session.plateNumber,
+      fee: payment?.amount || 0,
+    };
+    const pdfBuffer = await generatePDFBuffer(payload, user);
+
+    res.setHeader("Content-Disposition", "attachment; filename=ticket.pdf");
+    res.setHeader("Content-Type", "application/pdf");
+    return res.send(pdfBuffer);
   } catch (error) {
     return ServerResponse.error(res, "Error occurred", { error });
   }

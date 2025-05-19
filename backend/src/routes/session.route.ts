@@ -12,7 +12,7 @@ ParkingSession.post(
 );
 ParkingSession.get(
   "/all",
-  [checkAdmin, checkLoggedIn],
+  [checkAdmin],
   ParkingSessionController.fetchAllSessions
 );
 ParkingSession.get(

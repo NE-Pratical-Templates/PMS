@@ -10,7 +10,7 @@ Payment.post(
   [checkLoggedIn, validationMiddleware(CreatePaymentDTO)],
   payment.createPayment
 );
-Payment.get("/all", [checkAdmin, checkLoggedIn], payment.fetchAllPayment);
+Payment.get("/all", [checkAdmin], payment.fetchAllPayment);
 Payment.get("/user/all", [checkLoggedIn], payment.fetchAllPaymentByUser);
 Payment.get("/:id", [checkLoggedIn], payment.fetchPaymentById);
 export default Payment;

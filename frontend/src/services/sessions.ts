@@ -159,16 +159,35 @@ export const exitSession = async ({
   setSessionModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }) => {
   try {
+    setLoading(true);
+
     const url = `/session/${sessionId}/exit`;
-    const response = await api.patch(url);
-    setMeta(response.data.data?.meta);
-    toast.success(response.data.message);
+
+    // Request PDF as a Blob
+    const response = await api.patch(url, null, {
+      responseType: "blob", // 👈 important to receive binary data
+    });
+
+    // Download the PDF
+    const blob = new Blob([response.data], { type: "application/pdf" });
+    const urlBlob = window.URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = urlBlob;
+    link.setAttribute("download", `Parking_Ticket_${sessionId}.pdf`);
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    window.URL.revokeObjectURL(urlBlob); // clean up memory
+
+    toast.success("Exited and ticket downloaded");
   } catch (error: any) {
-    if (error.response.data.status === 401)
-      return window.location.replace("/auth/login");
-    error?.response?.data?.message
-      ? toast.error(error.response.data.message)
-      : toast.error("Error getting parking sessions");
+    if (error?.response?.status === 401) {
+      window.location.replace("/auth/login");
+    } else {
+      toast.error(
+        error?.response?.data?.message || "Error exiting parking session"
+      );
+    }
   } finally {
     setLoading(false);
     setSessionModalOpen(false);
